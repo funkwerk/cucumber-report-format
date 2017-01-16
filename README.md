@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/funkwerk/cucumber-report-format.svg)](https://travis-ci.org/funkwerk/cucumber-report-format)
 [![Code Climate](https://codeclimate.com/github/funkwerk/cucumber-report-format/badges/gpa.svg)](https://codeclimate.com/github/funkwerk/cucumber-report-format)
-[![Downloads](https://img.shields.io/gem/dt/cucumber-report-format.svg)]
-[![Latest Tag](https://img.shields.io/github/tag/funkwerk/cucumber-report-format.svg)]
+[![Downloads](https://img.shields.io/gem/dt/cucumber-report-format.svg)](https://rubygems.org/gems/cucumber-report-format)
+[![Latest Tag](https://img.shields.io/github/tag/funkwerk/cucumber-report-format.svg)](https://rubygems.org/gems/cucumber-report-format)
 
 # cucumber-report-format
 Formats Cucumber Reports
