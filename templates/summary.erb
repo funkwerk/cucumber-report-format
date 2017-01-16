@@ -1,0 +1,42 @@
+<%
+def all_tests(features)
+  tests = []
+  features.each do |feature|
+    next unless feature.key? 'elements'
+    feature['elements'].select { |element| element["keyword"] != 'Background' }.each do |element|
+      tests.push element
+    end
+  end
+  tests
+end
+
+def test_result(test)
+  status = 'passed'
+  duration = 0
+
+  steps = []
+  steps = test['steps'] if test.key? 'steps'
+  steps.each do |step|
+    next unless step.key? 'result'
+    result = step['result']
+    duration += result['duration'] if result.key? 'duration'
+    next if status == 'failed'
+    status = result['status'] if result.key? 'status'
+  end
+  {'status' => status, 'duration' => duration}
+end
+
+def is_executed?(test)
+  test['tags'].each do |tag|
+    return false if tag == '@skip'
+  end
+  true
+end
+%>
+## Summary
+
+| Tests        | <%= all_tests(@features).length %> |
+| - | - |
+| Passed       | <%= all_tests(@features).select { |test| test_result(test)['status'] == 'passed' }.length %> |
+| Failed       | <%= all_tests(@features).select { |test| test_result(test)['status'] == 'failed' }.length %> |
+| Not Executed | <%= all_tests(@features).select { |test| !is_executed? test }.length %> |

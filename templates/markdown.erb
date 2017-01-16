@@ -1,0 +1,131 @@
+<%
+def background(feature)
+  return {} unless feature.key? 'elements'
+  backgrounds = feature['elements'].select { |element| element['keyword'] == 'Background' }
+  return {} if backgrounds.length == 0
+  backgrounds.first
+end
+
+def output_background(background)
+  return '' if background == {}
+  result = '#### Background'
+  result += " (#{background['name']})" if background.key? 'name'
+  result += "\n\n"
+  result + output_steps(background)
+end
+
+def output_steps(element)
+  result = ''
+  steps = []
+  steps = element['steps'] if element.key? 'steps'
+  steps.each do |step|
+    result += "#{step['keyword']} #{step['name']}"
+    result += output_html_table(step)
+    result += output_text(step)
+    result += "\n"
+  end
+  result
+end
+
+def output_html_table(step)
+  return '' unless step.key? 'table'
+  result = "\n<table><tr><td>#{step['table']['headings'].join '</td><td>'}</td></tr>"
+  step['table']['rows'].each do |row|
+    result += "<tr><td>#{row.join '</td><td>'}</td></tr>"
+  end
+  result += '</table>'
+  result
+end
+
+def output_table(step)
+  return '' unless step.key? 'table'
+  result = "\n| #{step['table']['headings'].join ' | '} |"
+  step['table']['rows'].each do |row|
+    result += "\n| #{row.join ' | '} |"
+  end
+  result
+end
+
+
+def output_text(step)
+  return '' unless step.key? 'text'
+  return "\n > " + step['text'] if step['text'].instance_of? String
+  "\n > " + step['text'].join("\n> ")
+end
+
+
+def is_automatic?(scenario)
+  tags = []
+  tags = scenario['tags'] if scenario.key? 'tags'
+  tags.each do |tag|
+    return false if tag == '@manual'
+  end
+  true
+end
+
+def scenarios(feature)
+  return [] unless feature.key? 'elements'
+  feature['elements'].select { |element| element['keyword'] != 'Background' }
+end
+
+def test_result(test)
+  status = 'passed'
+  duration = 0
+  error = []
+
+  steps = []
+  steps = test['steps'] if test.key? 'steps'
+  steps.each do |step|
+    next unless step.key? 'result'
+    duration += step['result']['duration'] if step['result'].key? 'duration'
+    next if status == 'failed'
+    status = step['result']['status'] if step['result'].key? 'status'
+    step['result']['error_message'].each { |a| error.push a } if step['result'].key? 'error_message'
+  end
+  # TODO: symbols as keys, not strings
+  {'status' => status, 'duration' => duration, 'error' => error}
+end
+
+def hover_div(scenario)
+  result = "<div class='outer'><div>#{@scenario['name']}</div><div class='inner'>#{output_steps(@scenario).gsub("\n", '<br>').gsub('|','')}</div></div>"
+
+  result
+end
+
+def test_comment(scenario)
+  errors = test_result(scenario)['error']
+  return '' if errors.empty?
+  errors.last
+end
+
+%>
+
+## Features
+
+<style>
+.inner {
+  display: none;
+}
+
+.outer:hover .inner {
+  display: block;
+}
+</style>
+
+<%
+  number = 0
+%>
+<% for @feature in @features %>### <%= @feature['name'] %>
+
+#### Description
+
+> <%= @feature['description'].join "\n> " %>
+
+<%= output_background(background(@feature)) %>
+#### Testscenarios and Results
+
+| No | Scenario | Type | Result | Comment |
+|----|----------|------|--------|---------|
+<% for @scenario in scenarios(@feature) %><% number += 1 %>| <%= number %> | <%= hover_div(@scenario) %> | <%= is_automatic?(@scenario) ? 'automatic' : 'manual' %> | <%= test_result(@scenario)['status'] %> | <%= test_comment(@scenario) %> |
+<% end %>
+<% end %>

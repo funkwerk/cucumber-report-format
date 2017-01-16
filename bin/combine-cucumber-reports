@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require 'multi_json'
+
+puts MultiJson.dump ARGV.map { |file| MultiJson.load File.read file }.flatten

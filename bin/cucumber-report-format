@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'stringio'
+require 'multi_json'
+require 'erb'
+
+class Format
+  def render(template, file)
+    content = File.read file
+
+    render_content(template, content)
+  end
+
+  def render_content(template, content)
+    behave_output = BehaveOutput.new MultiJson.load(content)
+
+    renderer = ERB.new File.read template
+    puts renderer.result behave_output.binding_reference
+  end
+
+  # container class for erb variable
+  class BehaveOutput
+    attr_accessor :features
+
+    def initialize(features)
+      @features = features
+    end
+
+    def binding_reference
+      binding
+    end
+  end
+end
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: format [files]'
+  opts.on('--template [TEMPLATE]', 'Renders into template') do |template|
+    options[:template] = template
+  end
+  opts.on('-', 'Reads from stdin') do
+    options[:stdin] = true
+  end
+end.parse!
+
+formatter = Format.new
+
+exit 1 unless options.key? :template
+
+if options.key? :stdin
+  formatter.render_content(options[:template], STDIN.read)
+else
+  ARGV.each { |file| formatter.render(options[:template], file) }
+end

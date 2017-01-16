@@ -1,0 +1,34 @@
+<%
+def extract_used_tags(features)
+  count features.map { |feature| extract_feature_tags feature }.flatten
+end
+
+def extract_feature_tags(feature)
+  tags = []
+
+  tags += feature['tags'] if feature.key? 'tags'
+  feature['elements'].each { |e| tags += extract_element_tags(e) } if feature.key? 'elements'
+  tags
+end
+
+def extract_element_tags(feature)
+  tags = []
+
+  tags += feature['tags'] if feature.key? 'tags'
+  tags
+end
+
+def count(list)
+  tags = {}
+
+  list.each do |a|
+    tags[a] = 0 unless tags.key? a
+    tags[a] += 1
+  end
+  tags
+end
+%>
+| Tag | Amount |
+| - | - |
+<% for @key, @amount in extract_used_tags(@features).sort_by {|_, v| v }.reverse %>| <%= @key %> | <%= @amount %> |
+<% end %>
