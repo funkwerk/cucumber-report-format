@@ -23,7 +23,7 @@ def test_result(test)
     next if status == 'failed'
     status = result['status'] if result.key? 'status'
   end
-  {'status' => status, 'duration' => duration}
+  {:status => status, duration => duration}
 end
 
 def is_executed?(test)
@@ -32,4 +32,4 @@ def is_executed?(test)
   end
   true
 end
-%><%= all_tests(@features).length %> | <%= all_tests(@features).select { |test| test_result(test)['status'] == 'passed' }.length %> | <%= all_tests(@features).select { |test| test_result(test)['status'] == 'failed' }.length %> | <%= all_tests(@features).select { |test| !is_executed? test }.length %>
+%><%= all_tests(@features).length %> | <%= all_tests(@features).select { |test| test_result(test)[:status] == 'passed' }.length %> | <%= all_tests(@features).select { |test| test_result(test)[:status] == 'failed' }.length %> | <%= all_tests(@features).select { |test| !is_executed? test }.length %>

@@ -82,8 +82,7 @@ def test_result(test)
     status = step['result']['status'] if step['result'].key? 'status'
     step['result']['error_message'].each { |a| error.push a } if step['result'].key? 'error_message'
   end
-  # TODO: symbols as keys, not strings
-  {'status' => status, 'duration' => duration, 'error' => error}
+  {:status => status, :duration => duration, :error => error}
 end
 
 def hover_div(scenario)
@@ -93,7 +92,7 @@ def hover_div(scenario)
 end
 
 def test_comment(scenario)
-  errors = test_result(scenario)['error']
+  errors = test_result(scenario)[:error]
   return '' if errors.empty?
   errors.last
 end
@@ -126,6 +125,6 @@ end
 
 | No | Scenario | Type | Result | Comment |
 |----|----------|------|--------|---------|
-<% for @scenario in scenarios(@feature) %><% number += 1 %>| <%= number %> | <%= hover_div(@scenario) %> | <%= is_automatic?(@scenario) ? 'automatic' : 'manual' %> | <%= test_result(@scenario)['status'] %> | <%= test_comment(@scenario) %> |
+<% for @scenario in scenarios(@feature) %><% number += 1 %>| <%= number %> | <%= hover_div(@scenario) %> | <%= is_automatic?(@scenario) ? 'automatic' : 'manual' %> | <%= test_result(@scenario)[:status] %> | <%= test_comment(@scenario) %> |
 <% end %>
 <% end %>
