@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'cucumber-report-format'
-  s.version     = '0.0.2'
+  s.version     = '0.0.3'
   s.date        = '2017-01-16'
   s.summary     = 'Format Cucumber Reports'
   s.description = 'Template Engine for Cucumber Reports'

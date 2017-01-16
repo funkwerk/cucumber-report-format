@@ -7,7 +7,7 @@ end
 
 desc 'Publishes the Gem'
 task :push do
-  sh 'gem push cucumber-report-format-0.0.2.gem'
+  sh 'gem push cucumber-report-format-0.0.3.gem'
 end
 
 task audit: :rubocop
